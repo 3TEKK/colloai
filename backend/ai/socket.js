@@ -1,5 +1,6 @@
-// Import required modules
 const express = require("express");
+const http = require("http");
+const socketIO = require("socket.io");
 const bodyParser = require("body-parser");
 const Microphone = require("node-microphone");
 const fs = require("fs");
@@ -12,8 +13,13 @@ const Speaker = require("speaker");
 const OpenAI = require("openai");
 require("dotenv").config();
 
-// Set the path for FFmpeg, used for audio processing
 ffmpeg.setFfmpegPath(ffmpegPath);
+
+const app = express();
+app.use(bodyParser.json());
+
+const server = http.createServer(app);
+const io = socketIO(server); // Integrate Socket.IO with your server
 
 // Initialize OpenAI API client with the provided API key
 const secretKey = process.env.OPENAI_API_KEY;
@@ -21,22 +27,18 @@ const openai = new OpenAI({
   apiKey: secretKey,
 });
 
-// Variables to store chat history and other components
-let chatHistory = []; // To store the conversation history
-let mic, outputFile, micStream, rl; // Microphone, output file, microphone stream, and readline interface
+let chatHistory = [];
+let mic, outputFile, micStream, rl;
 
-// Function to start recording audio from the microphone
 const startRecording = () => {
   mic = new Microphone();
   outputFile = fs.createWriteStream("output.wav");
   micStream = mic.startRecording();
 
-  // Write incoming data to the output file
   micStream.on("data", (data) => {
     outputFile.write(data);
   });
 
-  // Handle microphone errors
   micStream.on("error", (error) => {
     console.error("Error: ", error);
   });
@@ -44,67 +46,60 @@ const startRecording = () => {
   console.log("Recording... Press Space bar to stop");
 };
 
-// Function to stop recording and process the audio
 const stopRecordingAndProcess = () => {
   mic.stopRecording();
   outputFile.end();
   console.log(`Recording stopped, processing audio...`);
-  transcribeAndChat(); // Transcribe the audio and initiate chat
+  transcribeAndChat();
 };
 
-// Function to convert text to speech and play it using Speaker
-async function streamedAudio(
-  inputText,
-  model = "tts-1",
-  voice = "echo"
-) {
-  const url = "https://api.openai.com/v1/audio/speech";
-  const headers = {
-    Authorization: `Bearer ${secretKey}`, // API key for authentication
-  };
-
-  const data = {
-    model: model,
-    input: inputText,
-    voice: voice,
-    response_format: "mp3",
-  };
-
-  try {
-    // Make a POST request to the OpenAI audio API
-    const response = await axios.post(url, data, {
-      headers: headers,
-      responseType: "stream",
-    });
-
-    // Configure speaker settings
-    const speaker = new Speaker({
-      channels: 2, // Stereo audio
-      bitDepth: 16,
-      sampleRate: 44100,
-    });
-
-    // Convert the response to the desired audio format and play it
-    ffmpeg(response.data)
-      .toFormat("s16le")
-      .audioChannels(2)
-      .audioFrequency(44100)
-      .pipe(speaker);
-  } catch (error) {
-    // Handle errors from the API or the audio processing
-    if (error.response) {
-      console.error(
-        `Error with HTTP request: ${error.response.status} - ${error.response.statusText}`
-      );
-    } else {
-      console.error(`Error in streamedAudio: ${error.message}`);
+const streamedAudio = async (inputText, model = "tts-1", voice = "echo") => {
+    const url = "https://api.openai.com/v1/audio/speech";
+    const headers = {
+      Authorization: `Bearer ${secretKey}`, // API key for authentication
+    };
+  
+    const data = {
+      model: model,
+      input: inputText,
+      voice: voice,
+      response_format: "mp3",
+    };
+  
+    try {
+      // Make a POST request to the OpenAI audio API
+      const response = await axios.post(url, data, {
+        headers: headers,
+        responseType: "stream",
+      });
+  
+      // Configure speaker settings
+      const speaker = new Speaker({
+        channels: 2, // Stereo audio
+        bitDepth: 16,
+        sampleRate: 44100,
+      });
+  
+      // Convert the response to the desired audio format and play it
+      ffmpeg(response.data)
+        .toFormat("s16le")
+        .audioChannels(2)
+        .audioFrequency(44100)
+        .pipe(speaker);
+    } catch (error) {
+      // Handle errors from the API or the audio processing
+      if (error.response) {
+        console.error(
+          `Error with HTTP request: ${error.response.status} - ${error.response.statusText}`
+        );
+      } else {
+        console.error(`Error in streamedAudio: ${error.message}`);
+      }
     }
-  }
-}
+};
 
-// Function to transcribe audio to text and send it to the chatbot
-async function transcribeAndChat(name, jobDescription) {
-  const filePath = "output.wav";
+const transcribeAndChat = async (name, jobDescription) => {
+    const filePath = "output.wav";
 
   // Prepare form data for the transcription request
   const form = new FormData();
@@ -172,17 +167,13 @@ async function transcribeAndChat(name, jobDescription) {
       console.error("Error:", error.message);
     }
   }
-}
 
-// Initialize Express app
-const app = express();
-app.use(bodyParser.json());
+};
 
-// Endpoint for AI interview
 app.post("/AI", async (req, res) => {
   try {
-    const { name, jobDescription } = req.body; // Extracting name and jobDescription from request body
-    await transcribeAndChat(name, jobDescription); // Pass name and jobDescription to transcribeAndChat function
+    const { name, jobDescription } = req.body;
+    await transcribeAndChat(name, jobDescription);
     res.status(200).send("Interview completed!");
   } catch (error) {
     console.error("Error:", error.message);
@@ -190,48 +181,65 @@ app.post("/AI", async (req, res) => {
   }
 });
 
-// Set up the readline interface for user input
 const setupReadlineInterface = () => {
-  rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: true, // Make sure the terminal can capture keypress events
-  });
-
-  readline.emitKeypressEvents(process.stdin, rl);
-
-  if (process.stdin.isTTY) {
-    process.stdin.setRawMode(true);
-  }
-
-  // Handle keypress events
-  process.stdin.on("keypress", (str, key) => {
-    if (
-      key &&
-      (key.name.toLowerCase() === "space" ||
-        key.name.toLowerCase() === "space")
-    ) {
-      if (micStream) {
-        stopRecordingAndProcess();
-      } else {
-        startRecording();
+    rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        terminal: true, // Make sure the terminal can capture keypress events
+      });
+    
+      readline.emitKeypressEvents(process.stdin, rl);
+    
+      if (process.stdin.isTTY) {
+        process.stdin.setRawMode(true);
       }
-    } else if (key && key.ctrl && key.name === "c") {
-      process.exit(); // Handle ctrl+c for exiting
-    } else if (key) {
-      console.log("Exiting application...");
-      process.exit(0);
+    
+      // Handle keypress events
+      process.stdin.on("keypress", (str, key) => {
+        if (
+          key &&
+          (key.name.toLowerCase() === "space" ||
+            key.name.toLowerCase() === "space")
+        ) {
+          if (micStream) {
+            stopRecordingAndProcess();
+          } else {
+            startRecording();
+          }
+        } else if (key && key.ctrl && key.name === "c") {
+          process.exit(); // Handle ctrl+c for exiting
+        } else if (key) {
+          console.log("Exiting application...");
+          process.exit(0);
+        }
+      });
+    
+      console.log("Press Space bar when you're ready to start speaking.");
+    
+};
+
+setupReadlineInterface();
+
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// Socket.IO integration
+io.on("connection", (socket) => {
+  console.log("Client connected");
+
+  // Handle start recording event
+  socket.on("start-recording", () => {
+    if (!micStream) {
+      startRecording();
     }
   });
 
-  console.log("Press Space bar when you're ready to start speaking.");
-};
-
-// Initialize the readline interface
-setupReadlineInterface();
-
-// Port configuration
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  // Handle stop recording event
+  socket.on("stop-recording", () => {
+    if (micStream) {
+      stopRecordingAndProcess();
+    }
+  });
 });
