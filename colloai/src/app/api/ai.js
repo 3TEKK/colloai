@@ -3,7 +3,7 @@ import socketIOClient from "socket.io-client";
 
 const ENDPOINT = "http://localhost:3001"; // Your backend server endpoint
 
-const StreamingComponent = () => {
+export const StreamingComponent = () => {
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
 
@@ -39,4 +39,3 @@ const StreamingComponent = () => {
   );
 };
 
-export default StreamingComponent;
