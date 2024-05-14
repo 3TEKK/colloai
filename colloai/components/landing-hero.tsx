@@ -2,12 +2,12 @@
 
 import TypewriterComponent from "typewriter-effect";
 import Link from "next/link";
-// import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 
 import { Button } from "./ui/button";
 
 export const LandingHero = () => {
-  // const { isSignedIn } = useAuth();
+  const { isSignedIn } = useAuth();
 
   return (
     <div className="text-black font-bold py-36 text-center space-y-5">
@@ -32,7 +32,7 @@ export const LandingHero = () => {
       </div>
       <div>
         {/* <Link href={isSignedIn ? "/dashboard" : "/sign-up"}> */}
-        <Link href={"/dashboard"}>
+        <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
           <Button variant="default" className="md:text-lg p-4 md:p-6 rounded-full font-semibold">
             Start Interview For Free
           </Button>
