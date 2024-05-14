@@ -22,10 +22,7 @@ export const Footer = () => {
                     y: 0,
                   },
                 }}
-                initial="hidden"
-                whileInView="visible"
-                transition={{ duration: 1, delay: 0.5 }}
-                viewport={{ once: true }}
+                
                 className="animate_top w-1/2 lg:w-1/4"
               >
                 <a href="index.html" className="relative">
@@ -60,11 +57,7 @@ export const Footer = () => {
                       y: 0,
                     },
                   }}
-                  initial="hidden"
-                  whileInView="visible"
-                  transition={{ duration: 1, delay: 0.1 }}
-                  viewport={{ once: true }}
-                  className="animate_top"
+                  
                 >
                   <h4 className="mb-9 text-itemtitle2 font-medium text-black dark:text-white">
                     Quick Links
@@ -118,11 +111,7 @@ export const Footer = () => {
                       y: 0,
                     },
                   }}
-                  initial="hidden"
-                  whileInView="visible"
-                  transition={{ duration: 1, delay: 0.1 }}
-                  viewport={{ once: true }}
-                  className="animate_top"
+                 
                 >
                   <h4 className="mb-9 text-itemtitle2 font-medium text-black dark:text-white">
                     Support
@@ -176,11 +165,7 @@ export const Footer = () => {
                       y: 0,
                     },
                   }}
-                  initial="hidden"
-                  whileInView="visible"
-                  transition={{ duration: 1, delay: 0.1 }}
-                  viewport={{ once: true }}
-                  className="animate_top"
+
                 >
                   <h4 className="mb-9 text-itemtitle2 font-medium text-black dark:text-white">
                     Newsletter
@@ -244,11 +229,7 @@ export const Footer = () => {
                   y: 0,
                 },
               }}
-              initial="hidden"
-              whileInView="visible"
-              transition={{ duration: 1, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="animate_top"
+
             >
               <ul className="flex items-center gap-8">
                 <li>
@@ -281,11 +262,7 @@ export const Footer = () => {
                   y: 0,
                 },
               }}
-              initial="hidden"
-              whileInView="visible"
-              transition={{ duration: 1, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="animate_top"
+
             >
               <p>
                 &copy; {new Date().getFullYear()} Collo. All rights reserved
@@ -304,11 +281,7 @@ export const Footer = () => {
                   y: 0,
                 },
               }}
-              initial="hidden"
-              whileInView="visible"
-              transition={{ duration: 1, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="animate_top"
+
             >
               <ul className="flex items-center gap-5">
                 <li>

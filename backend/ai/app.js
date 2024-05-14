@@ -1,35 +1,35 @@
 // Import required modules
-const express = require("express");
-const bodyParser = require("body-parser");
-const Microphone = require("node-microphone");
-const fs = require("fs");
-const ffmpeg = require("fluent-ffmpeg");
-const ffmpegPath = require("ffmpeg-static");
-const readline = require("readline");
-const axios = require("axios");
-const FormData = require("form-data");
-const Speaker = require("speaker");
-const OpenAI = require("openai");
-require("dotenv").config();
+const express = require("express"); // Express framework for handling HTTP requests
+const bodyParser = require("body-parser"); // Middleware to parse incoming request bodies
+const Microphone = require("node-microphone"); // Module to access the system's microphone
+const fs = require("fs"); // File system module to handle file operations
+const ffmpeg = require("fluent-ffmpeg"); // Module to handle audio and video processing
+const ffmpegPath = require("ffmpeg-static"); // Path to FFmpeg binary
+const readline = require("readline"); // Module to handle readable command-line interfaces
+const axios = require("axios"); // HTTP client for making requests
+const FormData = require("form-data"); // Constructor for creating HTML form data
+const Speaker = require("speaker"); // Output audio streams to the speakers
+const OpenAI = require("openai"); // OpenAI SDK for accessing OpenAI APIs
+require("dotenv").config(); // Load environment variables from .env file
 
 // Set the path for FFmpeg, used for audio processing
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 // Initialize OpenAI API client with the provided API key
-const secretKey = process.env.OPENAI_API_KEY;
+const secretKey = process.env.OPENAI_API_KEY; // Retrieve API key from environment variables
 const openai = new OpenAI({
   apiKey: secretKey,
 });
 
 // Variables to store chat history and other components
-let chatHistory = []; // To store the conversation history
-let mic, outputFile, micStream, rl; // Microphone, output file, microphone stream, and readline interface
+let chatHistory = []; // Array to store the conversation history
+let mic, outputFile, micStream, rl; // Variables for microphone, output file, microphone stream, and readline interface
 
 // Function to start recording audio from the microphone
 const startRecording = () => {
-  mic = new Microphone();
-  outputFile = fs.createWriteStream("output.wav");
-  micStream = mic.startRecording();
+  mic = new Microphone(); // Initialize microphone
+  outputFile = fs.createWriteStream("output.wav"); // Create a writable stream for the output file
+  micStream = mic.startRecording(); // Start recording and get the stream
 
   // Write incoming data to the output file
   micStream.on("data", (data) => {
@@ -46,8 +46,8 @@ const startRecording = () => {
 
 // Function to stop recording and process the audio
 const stopRecordingAndProcess = () => {
-  mic.stopRecording();
-  outputFile.end();
+  mic.stopRecording(); // Stop the microphone recording
+  outputFile.end(); // Close the writable stream
   console.log(`Recording stopped, processing audio...`);
   transcribeAndChat(); // Transcribe the audio and initiate chat
 };
@@ -58,7 +58,7 @@ async function streamedAudio(
   model = "tts-1",
   voice = "echo"
 ) {
-  const url = "https://api.openai.com/v1/audio/speech";
+  const url = "https://api.openai.com/v1/audio/speech"; // API endpoint for text-to-speech
   const headers = {
     Authorization: `Bearer ${secretKey}`, // API key for authentication
   };
@@ -104,13 +104,13 @@ async function streamedAudio(
 
 // Function to transcribe audio to text and send it to the chatbot
 async function transcribeAndChat(name, jobDescription) {
-  const filePath = "output.wav";
+  const filePath = "output.wav"; // Path to the recorded audio file
 
   // Prepare form data for the transcription request
   const form = new FormData();
-  form.append("file", fs.createReadStream(filePath));
-  form.append("model", "whisper-1");
-  form.append("response_format", "text");
+  form.append("file", fs.createReadStream(filePath)); // Append the audio file
+  form.append("model", "whisper-1"); // Specify the transcription model
+  form.append("response_format", "text"); // Specify the response format
 
   try {
     // Post the audio file to OpenAI for transcription
@@ -176,7 +176,7 @@ async function transcribeAndChat(name, jobDescription) {
 
 // Initialize Express app
 const app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.json()); // Use bodyParser middleware to parse JSON requests
 
 // Endpoint for AI interview
 app.post("/AI", async (req, res) => {
@@ -186,7 +186,7 @@ app.post("/AI", async (req, res) => {
     res.status(200).send("Interview completed!");
   } catch (error) {
     console.error("Error:", error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(500). send("Internal Server Error");
   }
 });
 
