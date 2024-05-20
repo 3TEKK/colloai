@@ -15,7 +15,7 @@ export const userDropdown= () => {
           <div className="text-gray-800 absolute top-10 right-7 cursor-pointer" onMouseEnter={toggleDropdown}>
             <FaRegUser size={30}/>
           </div>
-          {false && (
+          {isDropdownOpen && (
             <div className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded border border-gray-200">
               {/* Dropdown menu content */}
               <ul className="hidden absolute bg-white shadow-lg rounded border border-gray-200" onMouseLeave={() => setIsDropdownOpen(false)}>

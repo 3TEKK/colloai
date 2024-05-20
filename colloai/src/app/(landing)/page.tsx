@@ -7,7 +7,6 @@ import PricingProps from "../../../components/PricingProps";
 
 const LandingPage = () => {
   return (
-    <ClerkProvider>
       <div className="h-full ">
         <LandingNavbar />
         <LandingHero />
@@ -15,7 +14,6 @@ const LandingPage = () => {
         <PricingProps />
         <Footer />
       </div>
-    </ClerkProvider>
   );
 }
 
