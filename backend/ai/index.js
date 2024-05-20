@@ -172,7 +172,7 @@ async function transcribeAndChat() {
     // Extract transcribed text from the response
     const transcribedText = transcriptionResponse.data;
     console.log(`>> You said: ${transcribedText}`);
-    let Name = 'azeem'
+    let Name = 'Hamood '
     const jobDescription = `
 About the job
 Mapbox is the leading real-time location platform for a new generation of location-aware businesses. Mapbox is the only platform that equips organizations with the full set of tools to power the navigation of people, packages, and vehicles everywhere. More than 3.9 million registered developers have chosen Mapbox because of the platform’s flexibility, security, and privacy compliance. Organizations use Mapbox applications, data, SDKs, and APIs to create customized and immersive experiences that delight their customers.

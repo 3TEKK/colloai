@@ -12,13 +12,13 @@ export const userDropdown= () => {
 
     return (
         <div className="relative">
-          <div className="text-gray-800 absolute top-10 right-7 cursor-pointer" onClick={toggleDropdown}>
+          <div className="text-gray-800 absolute top-10 right-7 cursor-pointer" onMouseEnter={toggleDropdown}>
             <FaRegUser size={30}/>
           </div>
-          {isDropdownOpen && (
+          {false && (
             <div className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded border border-gray-200">
               {/* Dropdown menu content */}
-              <ul>
+              <ul className="hidden absolute bg-white shadow-lg rounded border border-gray-200" onMouseLeave={() => setIsDropdownOpen(false)}>
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Option 1</li>
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Option 2</li>
                 {/* Add more menu items as needed */}

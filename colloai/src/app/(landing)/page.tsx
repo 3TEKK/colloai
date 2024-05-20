@@ -3,6 +3,7 @@ import { LandingHero } from "../../../components/landing-hero";
 import { LandingContent } from "../../../components/landing-content";
 import { Footer } from "../../../components/footer";
 import { ClerkProvider } from "@clerk/nextjs";
+import PricingProps from "../../../components/PricingProps";
 
 const LandingPage = () => {
   return (
@@ -11,6 +12,7 @@ const LandingPage = () => {
         <LandingNavbar />
         <LandingHero />
         <LandingContent />
+        <PricingProps />
         <Footer />
       </div>
     </ClerkProvider>
