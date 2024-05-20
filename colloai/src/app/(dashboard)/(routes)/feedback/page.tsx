@@ -9,68 +9,12 @@ import { cn } from "../../../../../lib/utils";
 import { tools } from "../../../../../constants";
 import Dashboard from "../dashboard/page";
 import { Button } from "../../../../../components/ui/button";
+import { useState } from "react";
 
 
-
-export default function Feedback() {
-  const router = useRouter();
-
-  return (
-    <div className="w-full">
-      <div className="flex justify-center mb-8">
-        <Dashboard currentPage="/feedback"/>
-      </div>  
-      <div className="max-w-6xl mx-auto py-10 px-5">
-        <div className="text-3xl font-bold mb-6 ">Feedback History</div>
-        <div className="bg-slate-800 rounded-lg overflow-hidden">
-          <div className="grid grid-cols-6 gap-px text-center py-4 table-header text-white">
-            <div>Interview</div>
-            <div>Name</div>
-            <div>Date</div>
-            <div>Status</div>
-            <div>Feedback</div>
-            <div></div>
-          </div>
-          <div className="grid grid-cols-6 gap-px text-center py-4 bg-slate-700 text-white">
-            <div>Interview #1</div>
-            <div>Interview Name #1</div>
-            <div>27 Febuary 2023</div>
-            <div className="completed">Completed</div>
-            <Button variant="destructive" className="md:text-lg p-4 md:p-6 rounded-full font-semibold">
-            Open
-            </Button>
-          </div>
-          <div className="grid grid-cols-6 gap-px text-center py-4 bg-slate-700 text-white">
-            <div>Interview #2</div>
-            <div>Interview Name #2</div>
-            <div>20 Febuary 2024</div>
-            <div className="completed">Completed</div>
-            <Button variant="destructive" className="md:text-lg p-4 md:p-6 rounded-full font-semibold">
-            Open
-            </Button>
-          </div>
-          <div className="grid grid-cols-6 gap-px text-center py-4 bg-slate-700 text-white">
-            <div>Interview #3</div>
-            <div>Interview Name #3</div>
-            <div>7 March 2024</div>
-            <div className="incomplete">Incomplete</div>
-            <Button variant="destructive" className="md:text-lg p-4 md:p-6 rounded-full font-semibold">
-            Open
-            </Button>
-          </div>
-          <div className="grid grid-cols-6 gap-px text-center py-4 bg-slate-700 text-white">
-            <div>Interview #4</div>
-            <div>Interview Name #4</div>
-            <div>27 April 2024</div>
-            <div className="incomplete">Incomplete</div>
-            <Button variant="destructive" className="md:text-lg p-4 md:p-6 rounded-full font-semibold">
-            Open
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg">
+const PopupContent = ({ handleClosePopup }) => (
+  <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
+    <div className="absolute bg-white shadow-lg rounded-lg p-8 max-w-4xl">
       <h1 className="text-3xl font-bold text-center mb-6">Good Job!</h1>
       <div className="flex justify-around text-center mb-6">
         <div>
@@ -102,11 +46,81 @@ export default function Feedback() {
       </div>
       <div className="flex justify-between">
         <button className="bg-red-500 text-white py-2 px-4 rounded">Try Again</button>
-        <button className="bg-blue-500 text-white py-2 px-4 rounded">OK</button>
+        <button className="bg-blue-500 text-white py-2 px-4 rounded" onClick={handleClosePopup}>OK</button>
       </div>
     </div>
+  </div>
+);
 
+export default function Feedback() {
+  const router = useRouter();
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const handleOpenPopup = () => {
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
+
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-center mb-8">
+        <Dashboard currentPage="/feedback"/>
+      </div>  
+      <div className="max-w-6xl mx-auto py-10 px-5">
+        <div className="text-3xl font-bold mb-6 ">Feedback History</div>
+        <div className="bg-slate-800 rounded-lg overflow-hidden">
+          <div className="grid grid-cols-6 gap-px text-center py-4 table-header text-white">
+            <div>Interview</div>
+            <div>Name</div>
+            <div>Date</div>
+            <div>Status</div>
+            <div>Feedback</div>
+            <div></div>
+          </div>
+          <div className="grid grid-cols-6 gap-px text-center py-4 bg-slate-700 text-white">
+            <div>Interview #1</div>
+            <div>Interview Name #1</div>
+            <div>27 Febuary 2023</div>
+            <div className="completed">Completed</div>
+            <Button variant="destructive" className="md:text-lg p-4 md:p-6 rounded-full font-semibold" onClick={handleOpenPopup}>
+              Open
+            </Button>
+          </div>
+          <div className="grid grid-cols-6 gap-px text-center py-4 bg-slate-700 text-white">
+            <div>Interview #2</div>
+            <div>Interview Name #2</div>
+            <div>20 Febuary 2024</div>
+            <div className="completed">Completed</div>
+            <Button variant="destructive" className="md:text-lg p-4 md:p-6 rounded-full font-semibold" onClick={handleOpenPopup}>
+              Open
+            </Button>
+          </div>
+          <div className="grid grid-cols-6 gap-px text-center py-4 bg-slate-700 text-white">
+            <div>Interview #3</div>
+            <div>Interview Name #3</div>
+            <div>7 March 2024</div>
+            <div className="incomplete">Incomplete</div>
+            <Button variant="destructive" className="md:text-lg p-4 md:p-6 rounded-full font-semibold" onClick={handleOpenPopup}>
+              Open
+            </Button>
+          </div>
+          <div className="grid grid-cols-6 gap-px text-center py-4 bg-slate-700 text-white">
+            <div>Interview #4</div>
+            <div>Interview Name #4</div>
+            <div>27 April 2024</div>
+            <div className="incomplete">Incomplete</div>
+            <Button variant="destructive" className="md:text-lg p-4 md:p-6 rounded-full font-semibold" onClick={handleOpenPopup}>
+              Open
+            </Button>
+          </div>
+        </div>
+      </div>
+      {isPopupOpen && <PopupContent handleClosePopup={handleClosePopup} />}
     </div>
-    
   );
 }
