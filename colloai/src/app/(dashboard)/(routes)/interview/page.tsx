@@ -8,7 +8,7 @@ import { cn } from "../../../../../lib/utils";
 
 import { tools } from "../../../../../constants";
 import Dashboard from "../dashboard/page";
-import {StreamingComponent} from "../../../api/ai"
+
 
 export default function Interview() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function Interview() {
       <div className="bg-white flex items-center justify-center h-80">
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-20">Job Interview</h1>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={StreamingComponent}>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Join Now
         </button>
       </div>
