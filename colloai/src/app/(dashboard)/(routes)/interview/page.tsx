@@ -1,14 +1,28 @@
 "use client";
-import { useState } from 'react'; // Import useState hook
+import { useState, useEffect } from 'react'; // Import useState hook
 import axios from 'axios';
 import Dashboard from '../dashboard/page';
 
 export default function Interview() {
   const [isRecording, setIsRecording] = useState(false); // State to track recording status
+  const [jobDescription, setJobDescription] = useState("");
+  const [userName, setUserName] = useState("");
+  
+  useEffect(() => {
+    // Retrieve the job description and user name from localStorage
+    const savedJobDescription = localStorage.getItem("jobDescription") || "";
+    const savedUserName = localStorage.getItem("userName") || "Anonymous";
+
+    setJobDescription(savedJobDescription);
+    setUserName(savedUserName);
+  }, []);
 
   const handleStartRecording = async () => {
     try {
-      await axios.post('http://localhost:3001/start-recording');
+     await axios.post('http://localhost:3001/start-recording', {
+        jobDescription,
+        userName
+      });
       console.log('Recording started');
       setIsRecording(true); // Update state to indicate recording is active
     } catch (error) {
@@ -18,7 +32,10 @@ export default function Interview() {
 
   const handleStopRecording = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/stop-recording');
+      const response = await axios.post('http://localhost:3001/stop-recording', {
+        jobDescription,
+        userName
+      });
       console.log('Recording stopped');
       console.log(response.data.message); // AI response
       setIsRecording(false); // Update state to indicate recording is stopped

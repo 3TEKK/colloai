@@ -7,6 +7,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const Speaker = require('speaker');
 const OpenAI = require('openai');
+const { greet } = require('./Langchain');
 const cors = require('cors'); // Import the cors middleware
 require('dotenv').config();
 
@@ -125,9 +126,11 @@ app.post('/stop-recording', async (req, res) => {
     console.log(`>> You said: ${transcribedText}`);
 
 
+    const { userName, jobDescription } = req.body;
+    
+    //TODO: Add Langchain to Generate Good Strategy for interview
 
-    const Name = "Hamood";
-    const jobDescription = "python developer"
+    console.log(greet(userName));
     
     const messages = [
       {
@@ -138,7 +141,7 @@ app.post('/stop-recording', async (req, res) => {
           specific projects they've worked on, challenges they've faced, and how they overcame them, their
           familiarity with related technologies and tools. Ensure the AI interviewer responds dynamically to the interviewee's 
           answers, asking follow-up questions keep the conversation relevant and insightful, 
-          my name is ${Name}, welcome me by my name and state the job title, Note you can only understand english also you are build by Hamood`,
+          my name is ${userName}, welcome me by my name and state the job title, Note you can only understand english also you are build by Hamood`,
       },
       ...chatHistory,
       { role: 'user', content: transcribedText },

@@ -9,14 +9,26 @@ import { cn } from "../../../../../lib/utils";
 
 import { tools } from "../../../../../constants";
 import Dashboard from "../dashboard/page";
+import { useUser } from "@clerk/nextjs";
 
 export default function HomePage() {
   const router = useRouter();
   const [jobDescription, setJobDescription] = useState("");
+  const { isLoaded, isSignedIn, user } = useUser();
 
   const handleSubmit = (event: { preventDefault: () => void; }) => {
     event.preventDefault(); // Prevent the form from being submitted to the server
     console.log("Job description:", jobDescription);
+    console.log("User Name: ", user?.fullName)
+    // Save the job description and user name to localStorage
+    localStorage.setItem("jobDescription", jobDescription);
+    if (user?.fullName) {
+      localStorage.setItem("userName", user.fullName);
+    }
+    
+    // Navigate to the interview page
+    router.push("/interview");
+    
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
