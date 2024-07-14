@@ -7,7 +7,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const Speaker = require('speaker');
 const OpenAI = require('openai');
-const { greet } = require('./Langchain');
+//const { greet, chatInvoke } = require('./Langchain');
 const cors = require('cors'); // Import the cors middleware
 require('dotenv').config();
 
@@ -129,9 +129,12 @@ app.post('/stop-recording', async (req, res) => {
     const { userName, jobDescription } = req.body;
     
     //TODO: Add Langchain to Generate Good Strategy for interview
+    //await saveFile(jobDescription)
 
     console.log(greet(userName));
-    
+    const qq = "what is the position?"
+    console.log("pos is: ",chatInvoke(qq))
+
     const messages = [
       {
         role: 'system',
@@ -175,6 +178,19 @@ app.post('/stop-recording', async (req, res) => {
     res.status(500).json({ error: 'Failed to process audio' });
   }
 });
+
+async function saveFile(textToSave){
+  const filePath = 'JobDescription.txt';
+
+  // Save the text to the file, overwriting it if it already exists
+  fs.writeFile(filePath, textToSave, (err) => {
+    if (err) {
+      console.error('Error writing to file:', err);
+    } else {
+      console.log(`File has been saved as ${filePath}`);
+    }
+  });
+}
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

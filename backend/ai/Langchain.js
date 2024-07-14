@@ -1,46 +1,50 @@
-import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
-import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
-import { formatDocumentsAsString } from "langchain/util/document";
-import { PromptTemplate } from "@langchain/core/prompts";
-import {
-  RunnableSequence,
-  RunnablePassthrough,
-} from "@langchain/core/runnables";
+import { ChatOpenAI } from "@langchain/openai";
+import { TextLoader } from "langchain/document_loaders/fs/text";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
-const model = new ChatOpenAI({});
+import http from 'http'; // Importing 'http' module using ES module syntax
+import dotenv from 'dotenv';
+dotenv.config();
 
-const vectorStore = await HNSWLib.fromTexts(
-  ["mitochondria is the powerhouse of the cell"],
-  [{ id: 1 }],
-  new OpenAIEmbeddings()
-);
-const retriever = vectorStore.asRetriever();
+const loader = new TextLoader("./JobDescription.txt");
+const apiKey = process.env.OPENAI_API_KEY;
 
-const prompt =
-  PromptTemplate.fromTemplate(`Answer the question based only on the following context:
-{context}
+const createChatChain = () => {
+    const chatModel = new ChatOpenAI({
+        openAIApiKey: apiKey,
+    });
 
-Question: {question}`);
+    const prompt = ChatPromptTemplate.fromMessages([
+        ["system", "You are a world class technical documentation writer."],
+        ["user", "{input}"],
+    ]);
 
-const chain = RunnableSequence.from([
-  {
-    context: retriever.pipe(formatDocumentsAsString),
-    question: new RunnablePassthrough(),
-  },
-  prompt,
-  model,
-  new StringOutputParser(),
-]);
+    const llmchain = prompt.pipe(chatModel);
 
-const result = await chain.invoke("What is the powerhouse of the cell?");
+    return llmchain;
+};
 
-console.log(result);
+async function chatInvoke(question) {
+    // Assuming retriever, prompt, and model are defined elsewhere
+    const chain = RunnableSequence.from([
+        {
+            context: retriever,
+            question: new RunnablePassthrough(),
+        },
+        prompt,
+        model,
+        new StringOutputParser(),
+    ]);
+
+    const result = await chain.invoke(question);
+    return result;
+}
 
 function greet(name) {
-    console.log(name)
+    console.log(name);
     return `Hello, ${name}!`;
 }
- 
-  module.exports = { greet };
+
+module.exports = { greet, chatInvoke };
   

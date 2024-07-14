@@ -5,6 +5,7 @@ import { useRouter } from "next/router"; // Correct import for useRouter
 import React, { useState, useEffect } from 'react';
 import { FaRegUser } from "react-icons/fa";
 import { userDropdown } from "../../../../../components/user-dropdown";
+import { UserButton } from "@clerk/nextjs";
 
 import { Card } from "../../../../../components/ui/card";
 import { cn } from "../../../../../lib/utils";
@@ -59,19 +60,10 @@ const Dashboard = ({ currentPage = '/home' }: { currentPage?: string }) => {
           </a>
         </div>
       </div>
-      <div className="text-gray-800 absolute top-10 right-7 cursor-pointer" onClick={toggleDropdown}>
-        <FaRegUser size={30} />
+      <div className="text-gray-800 absolute top-10 right-7 cursor-pointer">
+      <UserButton />
       </div>
-      {isDropdownOpen && (
-        <div className="absolute top-16 right-10 w-40 bg-white shadow-lg rounded border border-gray-200">
-          {/* Dropdown menu content */}
-          <ul>
-            {user && <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Welcome {user.fullName}</li>}
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Settings</li>
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer"><a href="/">Logout</a></li>
-          </ul>
-        </div>
-      )}
+     
     </div>
   );
 };
